@@ -52,7 +52,7 @@ namespace chocolatey.infrastructure.app.configuration
 
         public override int GetHashCode()
         {
-            return HashCode
+            return utility.HashCode
                 .Of(Key)
                 .And(Value)
                 .And(Description);

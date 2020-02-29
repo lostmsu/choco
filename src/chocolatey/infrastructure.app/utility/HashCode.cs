@@ -24,6 +24,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+namespace chocolatey.infrastructure.app.utility
+{
 public struct HashCode
 {
     private readonly int value;
@@ -72,4 +74,5 @@ public struct HashCode
     {
         return item == null ? 0 : item.GetHashCode();
     }
+}
 }
