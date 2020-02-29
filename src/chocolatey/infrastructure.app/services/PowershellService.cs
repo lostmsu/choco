@@ -473,8 +473,6 @@ namespace chocolatey.infrastructure.app.services
                     Environment.SetEnvironmentVariable("CacheChecksumType_{0}".format_with(urlKey), "sha512");
                 }
             }
-
-            SecurityProtocol.set_protocol(configuration, provideWarning:false);
         }
 
         private ResolveEventHandler _handler = null;
