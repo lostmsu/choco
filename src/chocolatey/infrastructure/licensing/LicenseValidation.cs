@@ -101,7 +101,7 @@ namespace chocolatey.infrastructure.licensing
                     "chocolatey".Log().Error(regularLogOutput ? ChocolateyLoggers.Normal : ChocolateyLoggers.LogFileOnly, "A license was found for a licensed version of Chocolatey, but is invalid:{0} {1}".format_with(Environment.NewLine, e.Message));
                 }
 
-                var chocolateyLicenseType = ChocolateyLicenseType.Unknown;
+                ChocolateyLicenseType chocolateyLicenseType;
                 try
                 {
                     Enum.TryParse(license.LicenseType.to_string(), true, out chocolateyLicenseType);
@@ -114,10 +114,6 @@ namespace chocolatey.infrastructure.licensing
                 if (license.LicenseType == LicenseType.Trial)
                 {
                     chocolateyLicenseType = ChocolateyLicenseType.BusinessTrial;
-                }
-                else if (license.LicenseType == LicenseType.Education)
-                {
-                    chocolateyLicenseType = ChocolateyLicenseType.Educational;
                 }
 
                 chocolateyLicense.LicenseType = chocolateyLicenseType;
