@@ -44,12 +44,6 @@ namespace chocolatey.infrastructure.app.nuget
                 case MessageLevel.Error:
                     this.Log().Error("[NuGet] " + message, args);
                     break;
-                case MessageLevel.Fatal:
-                    this.Log().Fatal("[NuGet] " + message, args);
-                    break;
-                case MessageLevel.Verbose:
-                    this.Log().Info(ChocolateyLoggers.Verbose, "[NuGet] " + message, args);
-                    break;
             }
         }
     }

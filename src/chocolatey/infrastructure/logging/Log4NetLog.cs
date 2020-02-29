@@ -21,6 +21,7 @@ using log4net.Config;
 namespace chocolatey.infrastructure.logging
 {
     using System;
+    using System.Reflection;
     using System.Runtime;
     using log4net;
     using log4net.Core;
@@ -39,7 +40,7 @@ namespace chocolatey.infrastructure.logging
         [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
         public void InitializeFor(string loggerName)
         {
-            _logger = LogManager.GetLogger(loggerName);
+            _logger = LogManager.GetLogger(Assembly.GetExecutingAssembly(), loggerName);
         }
 
         [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]

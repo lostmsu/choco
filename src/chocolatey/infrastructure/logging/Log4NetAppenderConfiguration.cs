@@ -63,11 +63,11 @@ namespace chocolatey.infrastructure.logging
         public static void configure(string outputDirectory = null, params string[] excludeLoggerNames)
         {
             GlobalContext.Properties["pid"] = System.Diagnostics.Process.GetCurrentProcess().Id;
-            
+            var loggerRepository = LogManager.GetRepository(System.Reflection.Assembly.GetExecutingAssembly());
             var xmlConfigFile = Path.Combine(ApplicationParameters.InstallLocation, "log4net.config.xml");
             if (File.Exists(xmlConfigFile))
             {
-                XmlConfigurator.ConfigureAndWatch(new FileInfo(xmlConfigFile));
+                XmlConfigurator.ConfigureAndWatch(loggerRepository, new FileInfo(xmlConfigFile));
                 _logger.DebugFormat("Configured Log4Net configuration from file ('{0}').", xmlConfigFile);
             }
             else
@@ -81,7 +81,7 @@ namespace chocolatey.infrastructure.logging
                 }
                 Stream xmlConfigStream = assembly.get_manifest_stream(resource);
 
-                XmlConfigurator.Configure(xmlConfigStream);
+                XmlConfigurator.Configure(loggerRepository, xmlConfigStream);
 
                 _logger.DebugFormat("Configured Log4Net configuration ('{0}') from assembly {1}", resource, assembly.FullName);
             }
