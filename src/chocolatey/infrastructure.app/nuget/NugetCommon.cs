@@ -83,7 +83,6 @@ namespace chocolatey.infrastructure.app.nuget
 
             // ensure credentials can be grabbed from configuration
             HttpClient.DefaultCredentialProvider = new ChocolateyNugetCredentialProvider(configuration);
-            HttpClient.DefaultCertificateProvider = new ChocolateyClientCertificateProvider(configuration);
             if (!string.IsNullOrWhiteSpace(configuration.Proxy.Location))
             {
                 "chocolatey".Log().Debug("Using proxy server '{0}'.".format_with(configuration.Proxy.Location));
@@ -102,7 +101,7 @@ namespace chocolatey.infrastructure.app.nuget
 
                 proxy.BypassProxyOnLocal = configuration.Proxy.BypassOnLocal;
 
-                ProxyCache.Instance.Override(proxy);
+                ProxyCache.Instance.Add(proxy);
             }
 
             var updatedSources = new StringBuilder();
@@ -146,7 +145,9 @@ namespace chocolatey.infrastructure.app.nuget
                     }
                     else
                     {
-                        repositories.Add(new DataServicePackageRepository(new RedirectedHttpClient(uri, bypassProxy) { UserAgent = "Chocolatey Core" }, packageDownloader) { Logger = nugetLogger });
+                        repositories.Add(new DataServicePackageRepository(
+                            new RedirectedHttpClient(uri, bypassProxy) { UserAgent = "Chocolatey Core" },
+                            packageDownloader) { Logger = nugetLogger });
                     }
                 }
                 catch (Exception)
