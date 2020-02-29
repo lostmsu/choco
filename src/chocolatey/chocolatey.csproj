@@ -4,6 +4,9 @@
     <RootNamespace>chocolatey</RootNamespace>
     <AssemblyName>chocolatey</AssemblyName>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <PackageId>chocolatey.core</PackageId>
+
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
