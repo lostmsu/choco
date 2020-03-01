@@ -30,14 +30,21 @@ namespace chocolatey.infrastructure.app
         private static readonly IFileSystem _fileSystem = new DotNetFileSystem();
         public static readonly string ChocolateyInstallEnvironmentVariableName = "ChocolateyInstall";
         public static readonly string Name = "Chocolatey";
+        public static readonly string ChocolateyInstallOverrideEnvironmentVariableName
+            = ChocolateyInstallEnvironmentVariableName + "_Override";
+
+        static string get_install_location_override() {
+            string @override = System.Environment.GetEnvironmentVariable(ChocolateyInstallOverrideEnvironmentVariableName);
+            return string.IsNullOrWhiteSpace(@override) ? null : @override;
+        }
 
 #if FORCE_CHOCOLATEY_OFFICIAL_KEY
         // always look at the official location of the machine installation
-        public static readonly string InstallLocation = System.Environment.GetEnvironmentVariable(ChocolateyInstallEnvironmentVariableName) ?? _fileSystem.get_directory_name(_fileSystem.get_current_assembly_path());
+        public static readonly string InstallLocation =  System.Environment.GetEnvironmentVariable(ChocolateyInstallEnvironmentVariableName) ?? _fileSystem.get_directory_name(_fileSystem.get_current_assembly_path());
         public static readonly string LicensedAssemblyLocation = _fileSystem.combine_paths(InstallLocation, "extensions", "chocolatey", "chocolatey.licensed.dll");
 #elif DEBUG
         // Install location is choco.exe or chocolatey.dll
-        public static readonly string InstallLocation = _fileSystem.get_directory_name(_fileSystem.get_current_assembly_path());
+        public static readonly string InstallLocation = get_install_location_override() ?? _fileSystem.get_directory_name(_fileSystem.get_current_assembly_path());
         // when being used as a reference, start by looking next to Chocolatey, then in a subfolder.
         public static readonly string LicensedAssemblyLocation = _fileSystem.file_exists(_fileSystem.combine_paths(InstallLocation, "chocolatey.licensed.dll")) ? _fileSystem.combine_paths(InstallLocation, "chocolatey.licensed.dll") : _fileSystem.combine_paths(InstallLocation, "extensions", "chocolatey", "chocolatey.licensed.dll");
 #else
@@ -46,13 +53,14 @@ namespace chocolatey.infrastructure.app
         // start from the assembly location and if unfound, head to the machine
         // locations instead. This is a merge of official and Debug modes.
         private static IAssembly _assemblyForLocation = Assembly.GetEntryAssembly().UnderlyingType != null ? Assembly.GetEntryAssembly() : Assembly.GetExecutingAssembly();
-        public static readonly string InstallLocation = _fileSystem.file_exists(_fileSystem.combine_paths(_fileSystem.get_directory_name(_assemblyForLocation.CodeBase.Replace("file:///", string.Empty)), "chocolatey.dll")) ||
+        public static readonly string InstallLocation = get_install_location_override() ?? (
+                                                        _fileSystem.file_exists(_fileSystem.combine_paths(_fileSystem.get_directory_name(_assemblyForLocation.CodeBase.Replace("file:///", string.Empty)), "chocolatey.dll")) ||
                                                         _fileSystem.file_exists(_fileSystem.combine_paths(_fileSystem.get_directory_name(_assemblyForLocation.CodeBase.Replace("file:///", string.Empty)), "choco.exe")) ?
                 _fileSystem.get_directory_name(_assemblyForLocation.CodeBase.Replace("file:///", string.Empty)) :
                 !string.IsNullOrWhiteSpace(System.Environment.GetEnvironmentVariable(ChocolateyInstallEnvironmentVariableName)) ?
                     System.Environment.GetEnvironmentVariable(ChocolateyInstallEnvironmentVariableName) :
                     @"C:\ProgramData\Chocolatey"
-            ;
+            );
 
         // when being used as a reference, start by looking next to Chocolatey, then in a subfolder.
         public static readonly string LicensedAssemblyLocation = _fileSystem.file_exists(_fileSystem.combine_paths(InstallLocation, "chocolatey.licensed.dll")) ? _fileSystem.combine_paths(InstallLocation, "chocolatey.licensed.dll") : _fileSystem.combine_paths(InstallLocation, "extensions", "chocolatey", "chocolatey.licensed.dll");
