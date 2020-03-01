@@ -72,7 +72,7 @@ namespace chocolatey.infrastructure.app.registration
             container.Register<IChocolateyPackageService, ChocolateyPackageService>(Lifestyle.Singleton);
             container.Register<IAutomaticUninstallerService, AutomaticUninstallerService>(Lifestyle.Singleton);
             container.Register<ICommandExecutor, CommandExecutor>(Lifestyle.Singleton);
-            container.Register(() => new CustomString(string.Empty));
+            container.Register(() => new CustomString(string.Empty), Lifestyle.Singleton);
 
             //todo:refactor - this should be autowired
             container.Register<IEnumerable<ICommand>>(() =>
